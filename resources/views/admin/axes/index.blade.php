@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 
-@section('title', 'Gestion des axes stratégiques')
+@section('title', 'Axes stratégiques')
 
 @section('breadcrumb')
 <nav aria-label="breadcrumb">
@@ -24,7 +24,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
+                <table class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
                             <th>Image</th>
@@ -37,21 +37,28 @@
                     <tbody>
                         @forelse($axes as $axe)
                             <tr>
-                                <td>
-                                    <img src="{{ asset('storage/axes/' . $axe->image) }}" alt="{{ $axe->title }}" class="img-thumbnail" width="50">
+                                <td style="width: 100px;">
+                                    @if($axe->image)
+                                        <img src="{{ asset('storage/' . $axe->image) }}" 
+                                            alt="{{ $axe->title }}" 
+                                            class="img-thumbnail" 
+                                            style="max-width: 100px;">
+                                    @else
+                                        <span class="text-muted">Aucune image</span>
+                                    @endif
                                 </td>
                                 <td>{{ $axe->title }}</td>
                                 <td>{{ Str::limit($axe->description, 100) }}</td>
                                 <td>{{ $axe->created_at->format('d/m/Y H:i') }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.axes.edit', $axe) }}" class="btn btn-sm btn-info" title="Modifier">
+                                        <a href="{{ route('admin.axes.edit', $axe) }}" class="btn btn-primary btn-sm">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form action="{{ route('admin.axes.destroy', $axe) }}" method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet axe ?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" title="Supprimer">
+                                            <button type="submit" class="btn btn-danger btn-sm">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -60,7 +67,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center">Aucun axe stratégique trouvé.</td>
+                                <td colspan="5" class="text-center">Aucun axe stratégique trouvé</td>
                             </tr>
                         @endforelse
                     </tbody>

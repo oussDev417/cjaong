@@ -1,13 +1,13 @@
 @extends('admin.layouts.master')
 
-@section('title', 'Détails de l\'actualité')
+@section('title', $news->title)
 
 @section('breadcrumb')
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Tableau de bord</a></li>
         <li class="breadcrumb-item"><a href="{{ route('admin.news.index') }}">Actualités</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Détails</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ $news->title }}</li>
     </ol>
 </nav>
 @endsection
@@ -18,12 +18,12 @@
 
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">Détails de l'actualité</h5>
+            <h5 class="card-title mb-0">{{ $news->title }}</h5>
             <div>
-                <a href="{{ route('admin.news.edit', $news) }}" class="btn btn-primary">
+                <a href="{{ route('admin.news.edit', $news->id) }}" class="btn btn-primary btn-sm">
                     <i class="fas fa-edit me-2"></i>Modifier
                 </a>
-                <a href="{{ route('admin.news.index') }}" class="btn btn-secondary">
+                <a href="{{ route('admin.news.index') }}" class="btn btn-secondary btn-sm">
                     <i class="fas fa-arrow-left me-2"></i>Retour
                 </a>
             </div>
@@ -33,7 +33,7 @@
                 <div class="col-md-8">
                     <table class="table table-bordered">
                         <tr>
-                            <th width="200px">Titre</th>
+                            <th style="width: 200px;">Titre</th>
                             <td>{{ $news->title }}</td>
                         </tr>
                         <tr>
@@ -43,6 +43,10 @@
                         <tr>
                             <th>Description courte</th>
                             <td>{{ $news->short_description }}</td>
+                        </tr>
+                        <tr>
+                            <th>Slug</th>
+                            <td>{{ $news->slug }}</td>
                         </tr>
                         <tr>
                             <th>Date de création</th>
@@ -55,8 +59,8 @@
                     </table>
 
                     <div class="mt-4">
-                        <h6 class="fw-bold">Contenu</h6>
-                        <div class="border rounded p-3">
+                        <h6 class="fw-bold">Description détaillée</h6>
+                        <div class="border rounded p-3 bg-light">
                             {!! $news->description !!}
                         </div>
                     </div>
@@ -65,15 +69,17 @@
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-header">
-                            <h6 class="card-title mb-0">Image principale</h6>
+                            <h6 class="card-title mb-0">Image miniature</h6>
                         </div>
                         <div class="card-body">
                             @if($news->thumbnail)
-                                <img src="{{ asset('storage/news/' . $news->thumbnail) }}" 
-                                    alt="{{ $news->title }}" class="img-fluid rounded">
+                                <img src="{{ asset($news->thumbnail) }}" 
+                                     alt="{{ $news->title }}" 
+                                     class="img-fluid rounded">
                             @else
-                                <div class="alert alert-info mb-0">
-                                    Aucune image disponible
+                                <div class="text-center text-muted">
+                                    <i class="fas fa-image fa-3x mb-2"></i>
+                                    <p>Aucune image disponible</p>
                                 </div>
                             @endif
                         </div>

@@ -43,12 +43,13 @@
                             @error('short_description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                            <small class="form-text text-muted">Une brève description qui apparaîtra dans la liste des projets.</small>
                         </div>
 
                         <div class="mb-3">
                             <label for="description" class="form-label">Description détaillée <span class="text-danger">*</span></label>
                             <textarea class="form-control @error('description') is-invalid @enderror" 
-                                id="description" name="description" rows="10">{{ old('description', $project->description) }}</textarea>
+                                id="description" name="description" rows="10" required>{{ old('description', $project->description) }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -57,16 +58,24 @@
 
                     <div class="col-md-4">
                         <div class="mb-3">
-                            <label for="image" class="form-label">Image du projet</label>
+                            <label for="image" class="form-label">Image</label>
                             <input type="file" class="form-control @error('image') is-invalid @enderror" 
                                 id="image" name="image" accept="image/*">
+                            <small class="form-text text-muted">Format accepté : JPG, PNG, GIF. Taille maximale : 2 Mo.</small>
                             @error('image')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <div id="image-preview" class="mt-2">
+                        </div>
+                        <div class="mb-3">
+                            <div class="image-preview" style="max-width: 200px;">
                                 @if($project->image)
-                                    <img src="{{ asset('storage/' . $project->image) }}" 
-                                        alt="Image actuelle" class="img-thumbnail" style="max-height: 200px">
+                                    <img id="preview" src="{{ asset($project->image) }}" 
+                                         alt="{{ $project->title }}" 
+                                         style="max-width: 100%;">
+                                @else
+                                    <img id="preview" src="#" 
+                                         alt="Aperçu de l'image" 
+                                         style="max-width: 100%; display: none;">
                                 @endif
                             </div>
                         </div>
@@ -90,35 +99,39 @@
 @endsection
 
 @section('scripts')
-<script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // CKEditor
-    ClassicEditor
-        .create(document.querySelector('#description'))
-        .catch(error => {
-            console.error(error);
+    // Initialisation de l'éditeur TinyMCE pour la description détaillée
+    if (typeof tinymce !== 'undefined') {
+        tinymce.init({
+            selector: '#description',
+            height: 400,
+            menubar: false,
+            plugins: [
+                'advlist autolink lists link image charmap print preview anchor',
+                'searchreplace visualblocks code fullscreen',
+                'insertdatetime media table paste code help wordcount'
+            ],
+            toolbar: 'undo redo | formatselect | bold italic backcolor | \
+                alignleft aligncenter alignright alignjustify | \
+                bullist numlist outdent indent | removeformat | help'
         });
+    }
 
-    // Image Preview
-    const input = document.getElementById('image');
-    const preview = document.getElementById('image-preview');
-    const currentImage = preview.innerHTML;
+    // Prévisualisation de l'image
+    const imageInput = document.getElementById('image');
+    const previewImage = document.getElementById('preview');
 
-    input.addEventListener('change', function() {
-        preview.innerHTML = '';
+    imageInput.addEventListener('change', function() {
         if (this.files && this.files[0]) {
             const reader = new FileReader();
+            
             reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.classList.add('img-thumbnail', 'mt-2');
-                img.style.maxHeight = '200px';
-                preview.appendChild(img);
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
             }
+            
             reader.readAsDataURL(this.files[0]);
-        } else {
-            preview.innerHTML = currentImage;
         }
     });
 });

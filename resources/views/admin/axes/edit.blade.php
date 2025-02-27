@@ -24,12 +24,13 @@
             <form action="{{ route('admin.axes.update', $axe) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-
+                
                 <div class="row">
                     <div class="col-md-8">
                         <div class="mb-3">
                             <label for="title" class="form-label">Titre <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title" value="{{ old('title', $axe->title) }}" required>
+                            <input type="text" class="form-control @error('title') is-invalid @enderror" 
+                                id="title" name="title" value="{{ old('title', $axe->title) }}" required>
                             @error('title')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -37,7 +38,8 @@
 
                         <div class="mb-3">
                             <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
-                            <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="5" required>{{ old('description', $axe->description) }}</textarea>
+                            <textarea class="form-control @error('description') is-invalid @enderror" 
+                                id="description" name="description" rows="6" required>{{ old('description', $axe->description) }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -47,23 +49,33 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label for="image" class="form-label">Image</label>
-                            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image" accept="image/*">
+                            <input type="file" class="form-control @error('image') is-invalid @enderror" 
+                                id="image" name="image" accept="image/*">
+                            <small class="form-text text-muted">Formats acceptés : JPEG, PNG, JPG, GIF. Taille maximale : 2 Mo.</small>
                             @error('image')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <div class="mt-2">
-                                <img id="image-preview" src="{{ asset('storage/axes/' . $axe->image) }}" alt="{{ $axe->title }}" class="img-thumbnail" style="max-height: 200px;">
+                            <div id="image-preview" class="mt-2">
+                                @if($axe->image)
+                                    <img src="{{ asset('storage/' . $axe->image) }}" 
+                                        alt="{{ $axe->title }}" 
+                                        class="img-thumbnail" 
+                                        style="max-height: 200px">
+                                @endif
                             </div>
-                            <small class="form-text text-muted">Laissez vide pour conserver l'image actuelle</small>
                         </div>
                     </div>
                 </div>
 
-                <div class="text-end">
-                    <a href="{{ route('admin.axes.index') }}" class="btn btn-secondary me-2">Annuler</a>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-2"></i>Enregistrer les modifications
-                    </button>
+                <div class="row mt-3">
+                    <div class="col-md-8">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                        </button>
+                        <a href="{{ route('admin.axes.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Annuler
+                        </a>
+                    </div>
                 </div>
             </form>
         </div>
@@ -72,20 +84,37 @@
 @endsection
 
 @section('scripts')
+<script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 <script>
-    // Aperçu de l'image
-    document.getElementById('image').addEventListener('change', function(e) {
-        const preview = document.getElementById('image-preview');
-        const file = e.target.files[0];
-        const reader = new FileReader();
+document.addEventListener('DOMContentLoaded', function() {
+    // CKEditor
+    ClassicEditor
+        .create(document.querySelector('#description'))
+        .catch(error => {
+            console.error(error);
+        });
 
-        reader.onload = function(e) {
-            preview.src = e.target.result;
-        }
+    // Image Preview
+    const input = document.getElementById('image');
+    const preview = document.getElementById('image-preview');
+    const currentImage = preview.innerHTML;
 
-        if (file) {
-            reader.readAsDataURL(file);
+    input.addEventListener('change', function() {
+        preview.innerHTML = '';
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add('img-thumbnail', 'mt-2');
+                img.style.maxHeight = '200px';
+                preview.appendChild(img);
+            }
+            reader.readAsDataURL(this.files[0]);
+        } else {
+            preview.innerHTML = currentImage;
         }
     });
+});
 </script>
 @endsection 

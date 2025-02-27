@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 
-@section('title', 'Gestion des projets')
+@section('title', 'Projets')
 
 @section('breadcrumb')
 <nav aria-label="breadcrumb">
@@ -45,7 +45,7 @@
                             </td>
                             <td>
                                 @if($project->image)
-                                    <img src="{{ asset('storage/projects/' . $project->image) }}" 
+                                    <img src="{{ asset($project->image) }}" 
                                         alt="{{ $project->title }}" class="img-thumbnail" 
                                         style="max-width: 50px;">
                                 @else
@@ -58,21 +58,23 @@
                             <td>{{ Str::limit($project->short_description, 100) }}</td>
                             <td>{{ $project->created_at->format('d/m/Y') }}</td>
                             <td>
-                                <div class="btn-group" role="group">
-                                    <a href="{{ route('admin.projects.show', $project) }}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye me-1"></i>Voir
-                                    </a>
-                                    <a href="{{ route('admin.projects.edit', $project) }}" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-edit me-1"></i>Modifier
-                                    </a>
-                                    <form action="{{ route('admin.projects.destroy', $project) }}" method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash me-1"></i>Supprimer
-                                        </button>
-                                    </form>
-                                </div>
+                                <a href="{{ route('admin.projects.show', $project->id) }}" 
+                                    class="btn btn-info btn-sm" title="Voir">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('admin.projects.edit', $project->id) }}" 
+                                    class="btn btn-primary btn-sm" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('admin.projects.destroy', $project->id) }}" 
+                                    method="POST" class="d-inline-block"
+                                    onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         @empty
@@ -89,7 +91,6 @@
 @endsection
 
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var sortable = new Sortable(document.getElementById('sortable'), {

@@ -18,10 +18,10 @@
 
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title mb-0">Modifier l'actualité</h5>
+            <h5 class="card-title mb-0">Modifier une actualité</h5>
         </div>
         <div class="card-body">
-            <form action="{{ route('admin.news.update', $news) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.news.update', $news->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 
@@ -40,7 +40,7 @@
                             <label for="news_category_id" class="form-label">Catégorie <span class="text-danger">*</span></label>
                             <select class="form-select @error('news_category_id') is-invalid @enderror" 
                                 id="news_category_id" name="news_category_id" required>
-                                <option value="">Sélectionner une catégorie</option>
+                                <option value="">Sélectionnez une catégorie</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}" 
                                         {{ old('news_category_id', $news->news_category_id) == $category->id ? 'selected' : '' }}>
@@ -60,12 +60,13 @@
                             @error('short_description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                            <small class="form-text text-muted">Une brève description qui apparaîtra dans la liste des actualités.</small>
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Contenu <span class="text-danger">*</span></label>
+                            <label for="description" class="form-label">Description détaillée <span class="text-danger">*</span></label>
                             <textarea class="form-control @error('description') is-invalid @enderror" 
-                                id="description" name="description" rows="10">{{ old('description', $news->description) }}</textarea>
+                                id="description" name="description" rows="10" required>{{ old('description', $news->description) }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -74,17 +75,24 @@
 
                     <div class="col-md-4">
                         <div class="mb-3">
-                            <label for="thumbnail" class="form-label">Image principale</label>
+                            <label for="thumbnail" class="form-label">Image miniature</label>
                             <input type="file" class="form-control @error('thumbnail') is-invalid @enderror" 
                                 id="thumbnail" name="thumbnail" accept="image/*">
+                            <small class="form-text text-muted">Format accepté : JPG, PNG, GIF. Taille maximale : 2 Mo.</small>
                             @error('thumbnail')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                            <div id="image-preview" class="mt-2">
+                        </div>
+                        <div class="mb-3">
+                            <div class="image-preview" style="max-width: 200px;">
                                 @if($news->thumbnail)
-                                    <img src="{{ asset('storage/news/' . $news->thumbnail) }}" 
-                                        alt="{{ $news->title }}" class="img-thumbnail" 
-                                        style="max-height: 200px;">
+                                    <img id="preview" src="{{ asset($news->thumbnail) }}" 
+                                         alt="{{ $news->title }}" 
+                                         style="max-width: 100%;">
+                                @else
+                                    <img id="preview" src="#" 
+                                         alt="Aperçu de l'image" 
+                                         style="max-width: 100%; display: none;">
                                 @endif
                             </div>
                         </div>
@@ -108,31 +116,38 @@
 @endsection
 
 @section('scripts')
-<script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // CKEditor
-    ClassicEditor
-        .create(document.querySelector('#description'))
-        .catch(error => {
-            console.error(error);
+    // Initialisation de l'éditeur TinyMCE pour la description détaillée
+    if (typeof tinymce !== 'undefined') {
+        tinymce.init({
+            selector: '#description',
+            height: 400,
+            menubar: false,
+            plugins: [
+                'advlist autolink lists link image charmap print preview anchor',
+                'searchreplace visualblocks code fullscreen',
+                'insertdatetime media table paste code help wordcount'
+            ],
+            toolbar: 'undo redo | formatselect | bold italic backcolor | \
+                alignleft aligncenter alignright alignjustify | \
+                bullist numlist outdent indent | removeformat | help'
         });
+    }
 
-    // Image Preview
-    const input = document.getElementById('thumbnail');
-    const preview = document.getElementById('image-preview');
+    // Prévisualisation de l'image
+    const imageInput = document.getElementById('thumbnail');
+    const previewImage = document.getElementById('preview');
 
-    input.addEventListener('change', function() {
-        preview.innerHTML = '';
+    imageInput.addEventListener('change', function() {
         if (this.files && this.files[0]) {
             const reader = new FileReader();
+            
             reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.classList.add('img-thumbnail', 'mt-2');
-                img.style.maxHeight = '200px';
-                preview.appendChild(img);
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
             }
+            
             reader.readAsDataURL(this.files[0]);
         }
     });
