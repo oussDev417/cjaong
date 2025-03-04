@@ -57,7 +57,7 @@ class HomeController extends Controller
         // Récupérer les images de la galerie
         $galeries = Galerie::latest()->take(8)->get();
 
-        return view('frontend.home', compact(
+        return view('frontend.home.index', compact(
             'settings',
             'sliders',
             'about',

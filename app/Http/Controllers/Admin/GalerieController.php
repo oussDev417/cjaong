@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GalerieRequest;
 use App\Models\Galerie;
+use App\Models\GalerieCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class GalerieController extends Controller
 {
@@ -16,8 +18,12 @@ class GalerieController extends Controller
      */
     public function index()
     {
-        $galeries = Galerie::latest()->get();
-        return view('admin.galeries.index', compact('galeries'));
+        $images = Galerie::with('category')
+            ->orderBy('position')
+            ->paginate(12);
+        $categories = GalerieCategory::orderBy('name')->get();
+        
+        return view('admin.gallery.index', compact('images', 'categories'));
     }
 
     /**
@@ -25,7 +31,8 @@ class GalerieController extends Controller
      */
     public function create()
     {
-        return view('admin.galeries.create');
+        $categories = GalerieCategory::orderBy('name')->get();
+        return view('admin.gallery.create', compact('categories'));
     }
 
     /**
@@ -33,28 +40,36 @@ class GalerieController extends Controller
      */
     public function store(GalerieRequest $request)
     {
-        $data = $request->validated();
+        $image = new Galerie();
+        $image->title = $request->title;
+        $image->description = $request->description;
+        $image->galerie_category_id = $request->category_id;
         
+        // Déterminer la position maximale actuelle et ajouter 1
+        $maxPosition = Galerie::max('position') ?? 0;
+        $image->position = $maxPosition + 1;
+        
+        // Traitement de l'image
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $filename = time() . '_' . $image->getClientOriginalName();
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
             
-            // Redimensionner et sauvegarder l'image
-            $img = Image::make($image->getRealPath());
-            $img->fit(800, 600, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-            
-            // Sauvegarder l'image redimensionnée
-            $path = 'public/galeries/' . $filename;
-            Storage::put($path, $img->encode());
-            
-            $data['image'] = 'storage/galeries/' . $filename;
+            // Utiliser Intervention Image v3 pour optimiser l'image
+            $manager = new ImageManager(new Driver());
+            $manager->read($file)
+                ->resize(1200, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->save(public_path('uploads/gallery/' . $filename));
+                
+            $image->path = 'uploads/gallery/' . $filename;
         }
         
-        Galerie::create($data);
+        $image->save();
         
-        return redirect()->route('admin.galeries.index')->with('success', 'Image ajoutée à la galerie avec succès');
+        return redirect()->route('admin.gallery.index')
+            ->with('success', 'Image ajoutée avec succès.');
     }
 
     /**
@@ -62,7 +77,8 @@ class GalerieController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $image = Galerie::with('category')->findOrFail($id);
+        return view('admin.gallery.show', compact('image'));
     }
 
     /**
@@ -70,7 +86,9 @@ class GalerieController extends Controller
      */
     public function edit(Galerie $galerie)
     {
-        return view('admin.galeries.edit', compact('galerie'));
+        $categories = GalerieCategory::orderBy('name')->get();
+        $image = $galerie;
+        return view('admin.gallery.edit', compact('image', 'categories'));
     }
 
     /**
@@ -78,34 +96,36 @@ class GalerieController extends Controller
      */
     public function update(GalerieRequest $request, Galerie $galerie)
     {
-        $data = $request->validated();
+        $galerie->title = $request->title;
+        $galerie->description = $request->description;
+        $galerie->galerie_category_id = $request->category_id;
         
+        // Traitement de l'image si une nouvelle est fournie
         if ($request->hasFile('image')) {
-            // Supprimer l'ancienne image
-            if ($galerie->image) {
-                $oldPath = str_replace('storage/', 'public/', $galerie->image);
-                Storage::delete($oldPath);
+            // Supprimer l'ancienne image si elle existe
+            if ($galerie->path && file_exists(public_path($galerie->path))) {
+                unlink(public_path($galerie->path));
             }
             
-            $image = $request->file('image');
-            $filename = time() . '_' . $image->getClientOriginalName();
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
             
-            // Redimensionner et sauvegarder l'image
-            $img = Image::make($image->getRealPath());
-            $img->fit(800, 600, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-            
-            // Sauvegarder l'image redimensionnée
-            $path = 'public/galeries/' . $filename;
-            Storage::put($path, $img->encode());
-            
-            $data['image'] = 'storage/galeries/' . $filename;
+            // Utiliser Intervention Image v3 pour optimiser l'image
+            $manager = new ImageManager(new Driver());
+            $manager->read($file)
+                ->resize(1200, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->save(public_path('uploads/gallery/' . $filename));
+                
+            $galerie->path = 'uploads/gallery/' . $filename;
         }
         
-        $galerie->update($data);
+        $galerie->save();
         
-        return redirect()->route('admin.galeries.index')->with('success', 'Image de la galerie mise à jour avec succès');
+        return redirect()->route('admin.gallery.index')
+            ->with('success', 'Image mise à jour avec succès.');
     }
 
     /**
@@ -114,14 +134,13 @@ class GalerieController extends Controller
     public function destroy(Galerie $galerie)
     {
         // Supprimer l'image associée
-        if ($galerie->image) {
-            $path = str_replace('storage/', 'public/', $galerie->image);
-            Storage::delete($path);
+        if ($galerie->path && file_exists(public_path($galerie->path))) {
+            unlink(public_path($galerie->path));
         }
         
         $galerie->delete();
         
-        return redirect()->route('admin.galeries.index')->with('success', 'Image supprimée de la galerie avec succès');
+        return redirect()->route('admin.gallery.index')->with('success', 'Image supprimée de la galerie avec succès');
     }
 
     /**

@@ -21,22 +21,39 @@ class GalerieRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'title' => ['required', 'string', 'max:255'],
-            'image' => $this->galerie ? ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'] : ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+        $rules = [
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'category_id' => 'nullable|exists:galerie_categories,id',
         ];
+
+        // Si c'est une création, l'image est obligatoire
+        if ($this->isMethod('POST')) {
+            $rules['image'] = 'required|image|mimes:jpeg,png,jpg,gif|max:5120'; // 5MB max
+        } else {
+            // Si c'est une mise à jour, l'image est optionnelle
+            $rules['image'] = 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120'; // 5MB max
+        }
+
+        return $rules;
     }
 
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
     public function messages(): array
     {
         return [
-            'title.required' => 'Le titre est requis',
-            'title.string' => 'Le titre doit être une chaîne de caractères',
-            'title.max' => 'Le titre ne peut pas dépasser 255 caractères',
-            'image.required' => 'L\'image est requise',
-            'image.image' => 'Le fichier doit être une image',
-            'image.mimes' => 'L\'image doit être de type : jpeg, png, jpg, gif',
-            'image.max' => 'L\'image ne peut pas dépasser 2Mo',
+            'title.required' => 'Le titre de l\'image est obligatoire.',
+            'title.max' => 'Le titre de l\'image ne doit pas dépasser 255 caractères.',
+            'description.max' => 'La description ne doit pas dépasser 1000 caractères.',
+            'category_id.exists' => 'La catégorie sélectionnée n\'existe pas.',
+            'image.required' => 'Vous devez sélectionner une image.',
+            'image.image' => 'Le fichier doit être une image.',
+            'image.mimes' => 'L\'image doit être au format JPEG, PNG, JPG ou GIF.',
+            'image.max' => 'L\'image ne doit pas dépasser 5 Mo.',
         ];
     }
 }

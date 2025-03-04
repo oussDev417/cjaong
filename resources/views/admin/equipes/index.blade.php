@@ -36,7 +36,7 @@
                             <th style="width: 120px;">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="sortable" data-url="{{ route('admin.equipes.update-order') }}">
+                    <tbody class="sortable" data-url="{{ route('admin.equipes.updateOrder') }}">
                         @forelse($equipes as $equipe)
                             <tr data-id="{{ $equipe->id }}">
                                 <td>

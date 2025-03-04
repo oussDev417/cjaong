@@ -7,7 +7,8 @@ use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class ProjectController extends Controller
 {
@@ -40,14 +41,10 @@ class ProjectController extends Controller
             $filename = time() . '_' . $image->getClientOriginalName();
             
             // Redimensionner et sauvegarder l'image
-            $img = Image::make($image->getRealPath());
-            $img->fit(800, 600, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-            
-            // Sauvegarder l'image redimensionnée
-            $path = 'public/projects/' . $filename;
-            Storage::put($path, $img->encode());
+            $manager = new ImageManager(new Driver());
+            $manager->read($image)
+                ->cover(800, 600)
+                ->save(public_path('storage/projects/' . $filename));
             
             $data['image'] = 'storage/projects/' . $filename;
         }
@@ -91,14 +88,10 @@ class ProjectController extends Controller
             $filename = time() . '_' . $image->getClientOriginalName();
             
             // Redimensionner et sauvegarder l'image
-            $img = Image::make($image->getRealPath());
-            $img->fit(800, 600, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-            
-            // Sauvegarder l'image redimensionnée
-            $path = 'public/projects/' . $filename;
-            Storage::put($path, $img->encode());
+            $manager = new ImageManager(new Driver());
+            $manager->read($image)
+                ->cover(800, 600)
+                ->save(public_path('storage/projects/' . $filename));
             
             $data['image'] = 'storage/projects/' . $filename;
         }

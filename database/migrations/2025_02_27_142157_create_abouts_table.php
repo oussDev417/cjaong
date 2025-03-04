@@ -14,8 +14,14 @@ return new class extends Migration
         Schema::create('abouts', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('description');
-            $table->string('image');
+            $table->string('subtitle')->nullable();
+            $table->text('short_description');
+            $table->longText('description');
+            $table->text('mission')->nullable();
+            $table->text('vision')->nullable();
+            $table->text('values')->nullable();
+            $table->string('main_image')->nullable();
+            $table->string('secondary_image')->nullable();
             $table->timestamps();
         });
     }
@@ -27,4 +33,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('abouts');
     }
-};
+}; 

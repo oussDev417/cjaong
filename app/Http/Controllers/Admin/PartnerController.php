@@ -7,7 +7,8 @@ use App\Http\Requests\PartnerRequest;
 use App\Models\Partner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class PartnerController extends Controller
 {
@@ -40,7 +41,13 @@ class PartnerController extends Controller
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             
             // Redimensionner et sauvegarder l'image
-            Image::make($image)->fit(300, 200)->save(public_path('storage/partners/' . $imageName));
+            $manager = new ImageManager(new Driver());
+            $manager->read($image)
+                ->resize(300, 200, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->save(public_path('storage/partners/' . $imageName));
             
             $data['image'] = $imageName;
         }
@@ -83,7 +90,13 @@ class PartnerController extends Controller
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             
             // Redimensionner et sauvegarder l'image
-            Image::make($image)->fit(300, 200)->save(public_path('storage/partners/' . $imageName));
+            $manager = new ImageManager(new Driver());
+            $manager->read($image)
+                ->resize(300, 200, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->save(public_path('storage/partners/' . $imageName));
             
             $data['image'] = $imageName;
         }

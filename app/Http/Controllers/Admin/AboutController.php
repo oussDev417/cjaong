@@ -7,7 +7,8 @@ use App\Http\Requests\AboutRequest;
 use App\Models\About;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class AboutController extends Controller
 {
@@ -16,8 +17,7 @@ class AboutController extends Controller
      */
     public function index()
     {
-        $about = About::first();
-        return view('admin.about.index', compact('about'));
+        return redirect()->route('about.edit');
     }
 
     /**
@@ -25,13 +25,7 @@ class AboutController extends Controller
      */
     public function create()
     {
-        // Vérifier si une entrée existe déjà
-        if (About::exists()) {
-            return redirect()->route('admin.about.index')
-                ->with('error', 'Une section "À propos" existe déjà. Vous pouvez seulement la modifier.');
-        }
 
-        return view('admin.about.create');
     }
 
     /**
@@ -51,8 +45,11 @@ class AboutController extends Controller
             $image = $request->file('image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             
-            // Redimensionner et sauvegarder l'image
-            Image::make($image)->fit(800, 600)->save(public_path('storage/about/' . $imageName));
+            // Redimensionner et sauvegarder l'image avec Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $manager->read($image)
+                ->cover(800, 600)
+                ->save(public_path('storage/about/' . $imageName));
             
             $data['image'] = $imageName;
         }
@@ -73,36 +70,55 @@ class AboutController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(About $about)
+    public function edit()
     {
+        $about = About::first() ?? new About();
         return view('admin.about.edit', compact('about'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(AboutRequest $request, About $about)
+    public function update(AboutRequest $request)
     {
-        $data = $request->validated();
+        $about = About::first() ?? new About();
         
-        if ($request->hasFile('image')) {
-            // Supprimer l'ancienne image
-            if ($about->image && Storage::exists('public/about/' . $about->image)) {
-                Storage::delete('public/about/' . $about->image);
+        // Mise à jour des champs textuels
+        $about->title = $request->title;
+        $about->subtitle = $request->subtitle;
+        $about->short_description = $request->short_description;
+        $about->description = $request->description;
+        $about->mission = $request->mission;
+        $about->vision = $request->vision;
+        $about->values = $request->values;
+
+        // Gestion de l'image principale
+        if ($request->hasFile('main_image')) {
+            // Suppression de l'ancienne image si elle existe
+            if ($about->main_image && Storage::exists($about->main_image)) {
+                Storage::delete($about->main_image);
             }
             
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            
-            // Redimensionner et sauvegarder l'image
-            Image::make($image)->fit(800, 600)->save(public_path('storage/about/' . $imageName));
-            
-            $data['image'] = $imageName;
+            $path = $request->file('main_image')->store('about', 'public');
+            $about->main_image = 'storage/' . $path;
         }
-        
-        $about->update($data);
-        
-        return redirect()->route('admin.about.index')->with('success', 'Section "À propos" mise à jour avec succès');
+
+        // Gestion de l'image secondaire
+        if ($request->hasFile('secondary_image')) {
+            // Suppression de l'ancienne image si elle existe
+            if ($about->secondary_image && Storage::exists($about->secondary_image)) {
+                Storage::delete($about->secondary_image);
+            }
+            
+            $path = $request->file('secondary_image')->store('about', 'public');
+            $about->secondary_image = 'storage/' . $path;
+        }
+
+        $about->save();
+
+        return redirect()
+            ->route('admin.about.edit')
+            ->with('success', 'La page À propos a été mise à jour avec succès.');
     }
 
     /**

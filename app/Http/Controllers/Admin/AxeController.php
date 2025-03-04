@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AxeRequest;
 use App\Models\Axe;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class AxeController extends Controller
 {
@@ -39,7 +40,10 @@ class AxeController extends Controller
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             
             // Redimensionner et sauvegarder l'image
-            Image::make($image)->fit(800, 600)->save(public_path('storage/axes/' . $imageName));
+            $manager = new ImageManager(new Driver());
+            $manager->read($image)
+                ->cover(800, 600)
+                ->save(public_path('storage/axes/' . $imageName));
             
             $data['image'] = $imageName;
         }
@@ -82,7 +86,10 @@ class AxeController extends Controller
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             
             // Redimensionner et sauvegarder l'image
-            Image::make($image)->fit(800, 600)->save(public_path('storage/axes/' . $imageName));
+            $manager = new ImageManager(new Driver());
+            $manager->read($image)
+                ->cover(800, 600)
+                ->save(public_path('storage/axes/' . $imageName));
             
             $data['image'] = $imageName;
         }

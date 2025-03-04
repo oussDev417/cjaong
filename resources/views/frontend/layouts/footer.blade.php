@@ -1,123 +1,62 @@
-<footer class="footer">
-    <div class="footer-top">
+<!-- Footer Area Start -->
+<footer>
+    <div class="footer-overlay"></div>
+    <div class="footer-sec">
         <div class="container">
             <div class="row">
-                <div class="col-lg-4 col-md-6">
-                    <div class="footer-widget about-widget">
-                        <div class="footer-logo">
-                            <a href="{{ route('home') }}">
-                                <img src="{{ asset('assets/images/logo-white.png') }}" alt="CJ AONG">
-                            </a>
-                        </div>
-                        <div class="widget-content">
-                            <p>CJ AONG est une organisation non gouvernementale dédiée à l'amélioration des conditions de vie des communautés vulnérables à travers des projets de développement durable.</p>
-                            <ul class="social-links">
-                                @if(isset($settings))
-                                    @if($settings->fb_link)
-                                        <li>
-                                            <a href="{{ $settings->fb_link }}" target="_blank">
-                                                <i class="fab fa-facebook-f"></i>
-                                            </a>
-                                        </li>
-                                    @endif
-                                    @if($settings->insta_link)
-                                        <li>
-                                            <a href="{{ $settings->insta_link }}" target="_blank">
-                                                <i class="fab fa-instagram"></i>
-                                            </a>
-                                        </li>
-                                    @endif
-                                    @if($settings->linkedin_link)
-                                        <li>
-                                            <a href="{{ $settings->linkedin_link }}" target="_blank">
-                                                <i class="fab fa-linkedin-in"></i>
-                                            </a>
-                                        </li>
-                                    @endif
-                                    @if($settings->youtube_link)
-                                        <li>
-                                            <a href="{{ $settings->youtube_link }}" target="_blank">
-                                                <i class="fab fa-youtube"></i>
-                                            </a>
-                                        </li>
-                                    @endif
+                <div class="col-md-6 col-sm-12">
+                    <div class="footer-info">
+                        <h2>{{ $settings->site_name ?? 'Carrefour Jeunesse Afrique' }}</h2>
+                        <p>
+                            <strong>Horaires :</strong><br>
+                            Du lundi au vendredi : 8h - 12h et 14h - 18h (heure administrative) <br>
+                            Mercredi et samedi : 15h - 18h (heure d'animation)
+                        </p>
+                        <div class="social-profile">
+                            <ul>
+                                @if($settings->facebook ?? true)
+                                    <li><a href="{{ $settings->facebook_url ?? 'https://web.facebook.com/Carrefour-Jeunesse-Afrique-100329659021639' }}"><i class="fab fa-facebook-f"></i></a></li>
+                                @endif
+                                @if($settings->instagram ?? true)
+                                    <li><a href="{{ $settings->instagram_url ?? 'https://www.instagram.com/carrefour_jeunesse_afrique/?hl=fr' }}"><i class="fab fa-instagram"></i></a></li>
+                                @endif
+                                @if($settings->linkedin ?? false)
+                                    <li><a href="{{ $settings->linkedin_url ?? '#' }}"><i class="fab fa-linkedin-in"></i></a></li>
+                                @endif
+                                @if($settings->tiktok ?? true)
+                                    <li><a href="{{ $settings->tiktok_url ?? 'https://www.tiktok.com/@carrefour_jeunesse_afrique' }}"><i class="fab fa-tiktok"></i></a></li>
+                                @endif
+                                @if($settings->twitter ?? true)
+                                    <li><a href="{{ $settings->twitter_url ?? 'https://twitter.com/CarrefourJaw' }}"><i class="fab fa-twitter"></i></a></li>
                                 @endif
                             </ul>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="footer-widget links-widget">
-                        <h3 class="widget-title">Liens rapides</h3>
-                        <div class="widget-content">
-                            <ul class="links-list">
-                                <li><a href="{{ route('home') }}">Accueil</a></li>
-                                <li><a href="{{ route('about') }}">À propos</a></li>
-                                <li><a href="{{ route('projects.index') }}">Projets</a></li>
-                                <li><a href="{{ route('news.index') }}">Actualités</a></li>
-                                <li><a href="{{ route('galerie.index') }}">Galerie</a></li>
-                                <li><a href="{{ route('contact') }}">Contact</a></li>
-                                <li><a href="{{ route('benevole') }}">Devenir bénévole</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="footer-widget contact-widget">
-                        <h3 class="widget-title">Contactez-nous</h3>
-                        <div class="widget-content">
-                            <ul class="contact-info">
-                                @if(isset($settings))
-                                    @if($settings->adresse)
-                                        <li>
-                                            <i class="fas fa-map-marker-alt"></i>
-                                            <p>{{ $settings->adresse }}</p>
-                                        </li>
-                                    @endif
-                                    @if($settings->phone)
-                                        <li>
-                                            <i class="fas fa-phone-alt"></i>
-                                            <p><a href="tel:{{ $settings->phone }}">{{ $settings->phone }}</a></p>
-                                        </li>
-                                    @endif
-                                    @if($settings->email)
-                                        <li>
-                                            <i class="fas fa-envelope"></i>
-                                            <p><a href="mailto:{{ $settings->email }}">{{ $settings->email }}</a></p>
-                                        </li>
-                                    @endif
-                                @endif
-                            </ul>
-                            @if(isset($settings) && $settings->horaire_admin)
-                                <div class="horaires">
-                                    <h4>Horaires d'ouverture</h4>
-                                    <p>{!! nl2br(e($settings->horaire_admin)) !!}</p>
-                                </div>
-                            @endif
-                        </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="footer-contact">
+                        <h2>République du Bénin</h2>
+                        <p>
+                            <strong>Adresse :</strong> {{ $settings->address ?? 'Mono, Comè – Centre, Quartier Hongodé' }}<br>
+                            <strong>Rue :</strong> {{ $settings->street ?? 'n°3296 Danzounmé' }}<br>
+                            <strong>Email :</strong> <strong>{{ $settings->email ?? 'ongcarrefourjeunesseafrique@gmail.com' }}</strong><br>
+                            <strong>Téléphone : {{ $settings->phone ?? '+229 57-70-28-05' }}</strong>
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="footer-bottom">
+    <!-- Footer Bottom Section Start -->
+    <div class="footer-bottom-sec">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
-                    <div class="copyright">
-                        <p>&copy; {{ date('Y') }} <strong>CJ AONG</strong>. Tous droits réservés.</p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="footer-nav">
-                        <ul>
-                            <li><a href="{{ route('home') }}">Accueil</a></li>
-                            <li><a href="{{ route('about') }}">À propos</a></li>
-                            <li><a href="{{ route('contact') }}">Contact</a></li>
-                        </ul>
-                    </div>
+                <div class="col-md-12 text-center">
+                    <p>&copy; {{ date('Y') }} {{ $settings->site_name ?? 'Carrefour Jeunesse Afrique' }} | Tous droits réservés | <a href="{{ route('about') }}">Mentions légales</a></p>
                 </div>
             </div>
         </div>
     </div>
-</footer> 
+    <!-- Footer Bottom Section End -->
+</footer>
+<!-- Footer Area End -->

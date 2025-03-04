@@ -54,7 +54,7 @@
             </li>
             
             <li class="nav-item {{ request()->routeIs('admin.about.*') ? 'active' : '' }}">
-                <a href="{{ route('admin.about.index') }}" class="nav-link">
+                <a href="{{ route('admin.about.edit') }}" class="nav-link">
                     <i class="fas fa-info-circle"></i>
                     <span>À propos</span>
                 </a>
@@ -81,8 +81,8 @@
                 </a>
             </li>
             
-            <li class="nav-item {{ request()->routeIs('admin.header-sliders.*') ? 'active' : '' }}">
-                <a href="{{ route('admin.header-sliders.index') }}" class="nav-link">
+            <li class="nav-item {{ request()->routeIs('admin.sliders.*') ? 'active' : '' }}">
+                <a href="{{ route('admin.sliders.index') }}" class="nav-link">
                     <i class="fas fa-images"></i>
                     <span>Sliders</span>
                 </a>
@@ -146,19 +146,38 @@
                 </a>
             </li>
             
-            <li class="nav-item {{ request()->routeIs('admin.galeries.*') ? 'active' : '' }}">
-                <a href="{{ route('admin.galeries.index') }}" class="nav-link">
+            <li class="nav-item {{ request()->routeIs('admin.gallery.*') ? 'active' : '' }}">
+                <a href="#" class="nav-link has-dropdown" data-bs-toggle="collapse" data-bs-target="#galleryDropdown">
                     <i class="fas fa-images"></i>
                     <span>Galerie</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
+                <ul class="collapse nav-dropdown-list {{ request()->routeIs('admin.gallery.*') ? 'show' : '' }}" id="galleryDropdown">
+                    <li class="nav-dropdown-item {{ request()->routeIs('admin.gallery.index') || request()->routeIs('admin.gallery.create') || request()->routeIs('admin.gallery.edit') || request()->routeIs('admin.gallery.show') ? 'active' : '' }}">
+                        <a href="{{ route('admin.gallery.index') }}" class="nav-dropdown-link">
+                            <i class="fas fa-images"></i>
+                            <span>Images</span>
+                        </a>
+                    </li>
+                    <li class="nav-dropdown-item {{ request()->routeIs('admin.gallery.categories.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.gallery.categories.index') }}" class="nav-dropdown-link">
+                            <i class="fas fa-tags"></i>
+                            <span>Catégories</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
             
-            <li class="nav-item {{ request()->routeIs('admin.header-footer-settings.*') ? 'active' : '' }}">
-                <a href="{{ route('admin.header-footer-settings.index') }}" class="nav-link">
+            <li class="nav-item {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                <a href="{{ route('admin.settings.index') }}" class="nav-link">
                     <i class="fas fa-cogs"></i>
                     <span>Paramètres</span>
                 </a>
             </li>
+            
+            
+            
+            
         </ul>
     </nav>
 </aside> 

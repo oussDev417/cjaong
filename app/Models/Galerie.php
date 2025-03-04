@@ -9,8 +9,24 @@ class Galerie extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'title',
-        'image',
+        'path',
+        'description',
+        'galerie_category_id',
+        'position',
     ];
+
+    /**
+     * Get the category that owns the galerie.
+     */
+    public function category()
+    {
+        return $this->belongsTo(GalerieCategory::class, 'galerie_category_id');
+    }
 }

@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
@@ -39,8 +40,11 @@ class UserController extends Controller
             $image = $request->file('image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             
-            // Redimensionner et sauvegarder l'image
-            Image::make($image)->fit(800, 800)->save(public_path('storage/users/' . $imageName));
+            // Redimensionner et sauvegarder l'image avec Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $manager->read($image)
+                ->cover(800, 800)
+                ->save(public_path('storage/users/' . $imageName));
             
             $data['image'] = $imageName;
         }
@@ -84,8 +88,11 @@ class UserController extends Controller
             $image = $request->file('image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             
-            // Redimensionner et sauvegarder l'image
-            Image::make($image)->fit(800, 800)->save(public_path('storage/users/' . $imageName));
+            // Redimensionner et sauvegarder l'image avec Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $manager->read($image)
+                ->cover(800, 800)
+                ->save(public_path('storage/users/' . $imageName));
             
             $data['image'] = $imageName;
         }

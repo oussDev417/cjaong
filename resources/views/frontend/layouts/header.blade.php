@@ -1,141 +1,78 @@
-<!-- Top Bar -->
-<div class="top-bar">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-md-7">
-                <div class="top-bar-left">
-                    <ul class="info-list">
-                        @if(isset($settings))
-                            @if($settings->phone)
-                                <li>
-                                    <i class="fas fa-phone-alt"></i>
-                                    <a href="tel:{{ $settings->phone }}">{{ $settings->phone }}</a>
-                                </li>
-                            @endif
-                            @if($settings->email)
-                                <li>
-                                    <i class="fas fa-envelope"></i>
-                                    <a href="mailto:{{ $settings->email }}">{{ $settings->email }}</a>
-                                </li>
-                            @endif
-                            @if($settings->adresse)
-                                <li>
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>{{ $settings->adresse }}</span>
-                                </li>
-                            @endif
-                        @endif
-                    </ul>
+<!-- Header Start -->
+<header>
+    <!-- Header Top Start -->
+    <div class="hd-top-sec text-center">
+        <div class="hd-top-sec-overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-sm-3">
+                    <div class="logo">
+                        <a href="{{ route('home') }}">
+                            <img style="height:100px; width: 100px;" src="{{ asset('assets/images/logo.jpg') }}" alt="{{ $settings->site_name ?? 'CJA ONG' }}"/>
+                        </a>
+                    </div>
+                </div>              
+                <div class="col-md-2 col-sm-2">
+                    <div class="contact-info">
+                        <div class="info-box">
+                            <span class="info-title">Téléphone</span>
+                            <span>{{ $settings->phone ?? '+229 57-70-28-05' }}</span>
+                        </div>              
+                    </div>
+                </div>                 
+                <div class="col-md-4 col-sm-4">
+                    <div class="contact-info">          
+                        <div class="info-box">
+                            <span class="info-title">email</span>
+                            <span style="font-size: 14px;">{{ $settings->email ?? 'ongcarrefourjeunesseafrique@gmail.com' }}</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-4 col-md-5">
-                <div class="top-bar-right">
-                    <ul class="social-links">
-                        @if(isset($settings))
-                            @if($settings->fb_link)
-                                <li>
-                                    <a href="{{ $settings->fb_link }}" target="_blank">
-                                        <i class="fab fa-facebook-f"></i>
-                                    </a>
-                                </li>
+                <div class="col-md-3 col-sm-3">
+                    <div class="social-profile">
+                        <ul>
+                            @if($settings->facebook ?? true)
+                                <li><a href="{{ $settings->facebook_url ?? 'https://web.facebook.com/Carrefour-Jeunesse-Afrique-100329659021639' }}"><i class="fab fa-facebook-f"></i></a></li>
                             @endif
-                            @if($settings->insta_link)
-                                <li>
-                                    <a href="{{ $settings->insta_link }}" target="_blank">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
-                                </li>
+                            @if($settings->instagram ?? true)
+                                <li><a href="{{ $settings->instagram_url ?? 'https://www.instagram.com/carrefour_jeunesse_afrique/?hl=fr' }}"><i class="fab fa-instagram"></i></a></li>
                             @endif
-                            @if($settings->linkedin_link)
-                                <li>
-                                    <a href="{{ $settings->linkedin_link }}" target="_blank">
-                                        <i class="fab fa-linkedin-in"></i>
-                                    </a>
-                                </li>
+                            @if($settings->linkedin ?? false)
+                                <li><a href="{{ $settings->linkedin_url ?? '#' }}"><i class="fab fa-linkedin-in"></i></a></li>
                             @endif
-                            @if($settings->youtube_link)
-                                <li>
-                                    <a href="{{ $settings->youtube_link }}" target="_blank">
-                                        <i class="fab fa-youtube"></i>
-                                    </a>
-                                </li>
+                            @if($settings->tiktok ?? true)
+                                <li><a href="{{ $settings->tiktok_url ?? 'https://www.tiktok.com/@carrefour_jeunesse_afrique' }}"><i class="fab fa-tiktok"></i></a></li>
                             @endif
-                        @endif
-                    </ul>
+                            @if($settings->twitter ?? true)
+                                <li><a href="{{ $settings->twitter_url ?? 'https://twitter.com/CarrefourJaw' }}"><i class="fab fa-twitter"></i></a></li>
+                            @endif
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Header -->
-<header class="header">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-3 col-md-3 col-sm-6">
-                <div class="logo">
-                    <a href="{{ route('home') }}">
-                        <img src="{{ asset('assets/images/logo.png') }}" alt="CJ AONG">
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-9 col-md-9 col-sm-6">
-                <div class="nav-outer">
-                    <nav class="main-menu">
-                        <div class="navbar-header">
-                            <button type="button" class="navbar-toggle" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                            </button>
-                        </div>
-                        <div class="navbar-collapse collapse clearfix">
-                            <ul class="navigation clearfix">
-                                <li class="{{ request()->routeIs('home') ? 'active' : '' }}">
-                                    <a href="{{ route('home') }}">Accueil</a>
-                                </li>
-                                <li class="{{ request()->routeIs('about') || request()->routeIs('team') || request()->routeIs('axes') || request()->routeIs('partners') ? 'active dropdown' : 'dropdown' }}">
-                                    <a href="#">À propos</a>
-                                    <ul>
-                                        <li class="{{ request()->routeIs('about') ? 'active' : '' }}">
-                                            <a href="{{ route('about') }}">Qui sommes-nous</a>
-                                        </li>
-                                        <li class="{{ request()->routeIs('team') ? 'active' : '' }}">
-                                            <a href="{{ route('team') }}">Notre équipe</a>
-                                        </li>
-                                        <li class="{{ request()->routeIs('axes') ? 'active' : '' }}">
-                                            <a href="{{ route('axes') }}">Axes d'intervention</a>
-                                        </li>
-                                        <li class="{{ request()->routeIs('partners') ? 'active' : '' }}">
-                                            <a href="{{ route('partners') }}">Partenaires</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="{{ request()->routeIs('projects.*') ? 'active' : '' }}">
-                                    <a href="{{ route('projects.index') }}">Projets</a>
-                                </li>
-                                <li class="{{ request()->routeIs('news.*') ? 'active' : '' }}">
-                                    <a href="{{ route('news.index') }}">Actualités</a>
-                                </li>
-                                <li class="{{ request()->routeIs('galerie.*') ? 'active' : '' }}">
-                                    <a href="{{ route('galerie.index') }}">Galerie</a>
-                                </li>
-                                <li class="{{ request()->routeIs('contact') || request()->routeIs('benevole') ? 'active dropdown' : 'dropdown' }}">
-                                    <a href="#">Contact</a>
-                                    <ul>
-                                        <li class="{{ request()->routeIs('contact') ? 'active' : '' }}">
-                                            <a href="{{ route('contact') }}">Nous contacter</a>
-                                        </li>
-                                        <li class="{{ request()->routeIs('benevole') ? 'active' : '' }}">
-                                            <a href="{{ route('benevole') }}">Devenir bénévole</a>
-                                        </li>
-                                    </ul>
-                                </li>
+    <div class="hd-sec">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="menu">
+                        <nav id="main-menu" class="main-menu">
+                            <ul>
+                                <li><a class="{{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Accueil</a></li>
+                                <li><a class="{{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}">A propos</a></li> 
+                                <li><a class="{{ request()->routeIs('team') ? 'active' : '' }}" href="{{ route('team') }}">Notre équipe</a></li> 
+                                <li><a class="{{ request()->routeIs('projects.*') ? 'active' : '' }}" href="{{ route('projects.index') }}">Nos projets</a></li>
+                                <li><a class="{{ request()->routeIs('news.*') ? 'active' : '' }}" href="{{ route('news.index') }}">Nos actualités</a></li>
+                                <li><a class="{{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">Nous contacter</a></li>
+                                <li><a class="{{ request()->routeIs('donation') ? 'active' : '' }}" href="{{ route('donation') }}">Nous soutenir</a></li>
                             </ul>
-                        </div>
-                    </nav>
+                        </nav>
+                    </div>                  
                 </div>
             </div>
         </div>
     </div>
-</header> 
+    <!-- Header Top End -->
+</header>
+<!-- Header End --> 

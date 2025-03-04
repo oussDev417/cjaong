@@ -29,7 +29,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ route('admin.settings') }}">
+                                <a class="dropdown-item" href="{{ route('admin.settings.index') }}">
                                     <i class="fas fa-cog"></i> Paramètres
                                 </a>
                             </li>

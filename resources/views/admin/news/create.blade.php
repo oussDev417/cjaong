@@ -36,6 +36,21 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="slug" class="form-label">Slug <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="text" class="form-control @error('slug') is-invalid @enderror" 
+                                    id="slug" name="slug" value="{{ old('slug') }}" required>
+                                <button class="btn btn-outline-secondary" type="button" id="regenerateSlug">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                            @error('slug')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <small class="form-text text-muted">L'identifiant unique de l'actualité dans l'URL (généré automatiquement à partir du titre).</small>
+                        </div>
+
+                        <div class="mb-3">
                             <label for="news_category_id" class="form-label">Catégorie <span class="text-danger">*</span></label>
                             <select class="form-select @error('news_category_id') is-invalid @enderror" 
                                 id="news_category_id" name="news_category_id" required>
@@ -141,6 +156,33 @@ document.addEventListener('DOMContentLoaded', function() {
             
             reader.readAsDataURL(this.files[0]);
         }
+    });
+
+    // Génération automatique du slug
+    const titleInput = document.getElementById('title');
+    const slugInput = document.getElementById('slug');
+    const regenerateButton = document.getElementById('regenerateSlug');
+
+    function generateSlug(text) {
+        return text
+            .toString()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w-]+/g, '')
+            .replace(/--+/g, '-');
+    }
+
+    titleInput.addEventListener('input', function() {
+        if (!slugInput.value || slugInput.value === generateSlug(titleInput.value.trim())) {
+            slugInput.value = generateSlug(this.value);
+        }
+    });
+
+    regenerateButton.addEventListener('click', function() {
+        slugInput.value = generateSlug(titleInput.value);
     });
 });
 </script>

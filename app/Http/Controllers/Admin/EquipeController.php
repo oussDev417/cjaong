@@ -8,7 +8,8 @@ use App\Models\Equipe;
 use App\Models\EquipeCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class EquipeController extends Controller
 {
@@ -42,7 +43,10 @@ class EquipeController extends Controller
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             
             // Redimensionner et sauvegarder l'image
-            Image::make($image)->fit(400, 400)->save(public_path('storage/equipes/' . $imageName));
+            $manager = new ImageManager(new Driver());
+            $manager->read($image)
+                ->cover(400, 500)
+                ->save(public_path('storage/equipes/' . $imageName));
             
             $data['image'] = $imageName;
         }
@@ -86,7 +90,10 @@ class EquipeController extends Controller
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             
             // Redimensionner et sauvegarder l'image
-            Image::make($image)->fit(400, 400)->save(public_path('storage/equipes/' . $imageName));
+            $manager = new ImageManager(new Driver());
+            $manager->read($image)
+                ->cover(400, 500)
+                ->save(public_path('storage/equipes/' . $imageName));
             
             $data['image'] = $imageName;
         }

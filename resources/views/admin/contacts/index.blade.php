@@ -97,9 +97,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <form action="{{ route('admin.contacts.destroy-multiple') }}" method="POST">
+                <form action="{{ route('admin.contacts.destroyMultiple') }}" method="POST">
                     @csrf
-                    @method('DELETE')
                     <input type="hidden" name="ids" id="selectedIds">
                     <button type="submit" class="btn btn-danger">Supprimer</button>
                 </form>

@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('galeries', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('image');
+            $table->string('path');
+            $table->text('description')->nullable();
+            $table->foreignId('galerie_category_id')->nullable()->constrained()->nullOnDelete();
+            $table->integer('position')->default(0);
             $table->timestamps();
         });
     }

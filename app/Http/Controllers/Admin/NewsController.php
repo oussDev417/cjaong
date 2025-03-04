@@ -8,7 +8,8 @@ use App\Models\News;
 use App\Models\NewsCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class NewsController extends Controller
 {
@@ -41,15 +42,14 @@ class NewsController extends Controller
             $image = $request->file('thumbnail');
             $filename = time() . '_' . $image->getClientOriginalName();
             
-            // Redimensionner et sauvegarder l'image
-            $img = Image::make($image->getRealPath());
-            $img->fit(800, 600, function ($constraint) {
-                $constraint->aspectRatio();
-            });
+            // Redimensionner et sauvegarder l'image avec Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $img = $manager->read($image->getRealPath());
+            $img->cover(800, 600);
             
             // Sauvegarder l'image redimensionnée
             $path = 'public/news/' . $filename;
-            Storage::put($path, $img->encode());
+            Storage::put($path, $img->toJpeg());
             
             $data['thumbnail'] = 'storage/news/' . $filename;
         }
@@ -93,15 +93,14 @@ class NewsController extends Controller
             $image = $request->file('thumbnail');
             $filename = time() . '_' . $image->getClientOriginalName();
             
-            // Redimensionner et sauvegarder l'image
-            $img = Image::make($image->getRealPath());
-            $img->fit(800, 600, function ($constraint) {
-                $constraint->aspectRatio();
-            });
+            // Redimensionner et sauvegarder l'image avec Intervention Image v3
+            $manager = new ImageManager(new Driver());
+            $img = $manager->read($image->getRealPath());
+            $img->cover(800, 600);
             
             // Sauvegarder l'image redimensionnée
             $path = 'public/news/' . $filename;
-            Storage::put($path, $img->encode());
+            Storage::put($path, $img->toJpeg());
             
             $data['thumbnail'] = 'storage/news/' . $filename;
         }

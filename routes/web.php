@@ -24,11 +24,15 @@ use App\Http\Controllers\Frontend\ContactController as FrontendContactController
 use App\Http\Controllers\Frontend\NewsController as FrontendNewsController;
 use App\Http\Controllers\Frontend\ProjectController as FrontendProjectController;
 use App\Http\Controllers\Frontend\GalerieController as FrontendGalerieController;
+use App\Http\Controllers\Admin\GalerieCategoryController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\SliderController;
 
 // Frontend Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/a-propos', [FrontendAboutController::class, 'index'])->name('about');
 Route::get('/equipe', [FrontendAboutController::class, 'team'])->name('team');
+Route::get('/donation')->name('donation');
 Route::get('/axes-intervention', [FrontendAboutController::class, 'axes'])->name('axes');
 Route::get('/partenaires', [FrontendAboutController::class, 'partners'])->name('partners');
 
@@ -66,9 +70,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         
         // Contacts
         Route::resource('contacts', ContactController::class);
+        Route::post('contacts/destroy-multiple', [ContactController::class, 'destroyMultiple'])->name('contacts.destroyMultiple');
         
         // About
-        Route::resource('about', AboutController::class);
+        Route::get('/about', [AboutController::class, 'index'])->name('about.index');
+        Route::get('/about/edit', [AboutController::class, 'edit'])->name('about.edit');
+        Route::put('/about/update', [AboutController::class, 'update'])->name('about.update');
         
         // Axes
         Route::resource('axes', AxeController::class);
@@ -96,6 +103,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         
         // Equipe
         Route::resource('equipes', EquipeController::class);
+        Route::post('equipes/update-order', [EquipeController::class, 'updateOrder'])->name('equipes.updateOrder');
         
         // News Categories
         Route::resource('news-categories', NewsCategoryController::class);
@@ -108,17 +116,30 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('projects', ProjectController::class);
         
         // Galerie
-        Route::resource('galeries', GalerieController::class);
+        Route::prefix('gallery')->group(function () {
+            Route::get('/categories', [GalerieCategoryController::class, 'index'])->name('gallery.categories.index');
+            Route::post('/categories', [GalerieCategoryController::class, 'store'])->name('gallery.categories.store');
+            Route::put('/categories/{category}', [GalerieCategoryController::class, 'update'])->name('gallery.categories.update');
+            Route::delete('/categories/{category}', [GalerieCategoryController::class, 'destroy'])->name('gallery.categories.destroy');
+        });
+
+        Route::resource('gallery', GalerieController::class);
+        Route::post('gallery/update-order', [GalerieController::class, 'updateOrder'])->name('gallery.update-order');
+        
+        // Settings
+        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::put('/settings/{id}', [SettingController::class, 'update'])->name('settings.update');
+        
+        // Sliders
+        Route::resource('sliders', SliderController::class);
+        Route::post('sliders/update-order', [SliderController::class, 'updateOrder'])->name('sliders.update-order');
         
         // Header Footer Settings
         Route::resource('header-footer-settings', HeaderFooterSettingController::class);
-        
+
         // Profile
         Route::get('/profile/edit', [UserController::class, 'editProfile'])->name('profile.edit');
         Route::put('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
-        
-        // Settings
-        Route::get('/settings', [HeaderFooterSettingController::class, 'index'])->name('settings');
     });
 });
 

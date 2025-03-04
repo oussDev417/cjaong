@@ -7,7 +7,8 @@ use App\Http\Requests\HeaderSliderRequest;
 use App\Models\HeaderSlider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class HeaderSliderController extends Controller
 {
@@ -40,7 +41,10 @@ class HeaderSliderController extends Controller
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             
             // Redimensionner et sauvegarder l'image
-            Image::make($image)->fit(1920, 1080)->save(public_path('storage/sliders/' . $imageName));
+            $manager = new ImageManager(new Driver());
+            $manager->read($image)
+                ->cover(1920, 800)
+                ->save(public_path('storage/sliders/' . $imageName));
             
             $data['image'] = $imageName;
         }
@@ -83,7 +87,10 @@ class HeaderSliderController extends Controller
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             
             // Redimensionner et sauvegarder l'image
-            Image::make($image)->fit(1920, 1080)->save(public_path('storage/sliders/' . $imageName));
+            $manager = new ImageManager(new Driver());
+            $manager->read($image)
+                ->cover(1920, 800)
+                ->save(public_path('storage/sliders/' . $imageName));
             
             $data['image'] = $imageName;
         }
