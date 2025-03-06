@@ -8,7 +8,7 @@ use App\Models\Axe;
 use App\Models\Equipe;
 use App\Models\EquipeCategory;
 use App\Models\FunFact;
-use App\Models\HeaderFooterSetting;
+use App\Models\Setting;
 use App\Models\Partner;
 use App\Models\StatFact;
 use Illuminate\Http\Request;
@@ -21,7 +21,7 @@ class AboutController extends Controller
     public function index()
     {
         // Récupérer les paramètres d'en-tête et de pied de page
-        $settings = HeaderFooterSetting::first();
+        $settings = Setting::first();
 
         // Récupérer les informations de la section À propos
         $about = About::first();
@@ -41,7 +41,7 @@ class AboutController extends Controller
         // Récupérer les partenaires
         $partners = Partner::latest()->get();
 
-        return view('frontend.about', compact(
+        return view('frontend.about.index', compact(
             'settings',
             'about',
             'axes',
@@ -58,7 +58,7 @@ class AboutController extends Controller
     public function team()
     {
         // Récupérer les paramètres d'en-tête et de pied de page
-        $settings = HeaderFooterSetting::first();
+        $settings = Setting::first();
 
         // Récupérer les catégories d'équipe avec leurs membres
         $equipeCategories = EquipeCategory::with('equipes')->get();
@@ -75,7 +75,7 @@ class AboutController extends Controller
     public function axes()
     {
         // Récupérer les paramètres d'en-tête et de pied de page
-        $settings = HeaderFooterSetting::first();
+        $settings = Setting::first();
 
         // Récupérer les axes d'intervention
         $axes = Axe::latest()->get();
@@ -93,17 +93,17 @@ class AboutController extends Controller
     /**
      * Affiche la page des partenaires.
      */
-    public function partners()
-    {
-        // Récupérer les paramètres d'en-tête et de pied de page
-        $settings = HeaderFooterSetting::first();
+    // public function partners()
+    // {
+    //     // Récupérer les paramètres d'en-tête et de pied de page
+    //     $settings = Setting::first();
 
-        // Récupérer les partenaires
-        $partners = Partner::latest()->get();
+    //     // Récupérer les partenaires
+    //     $partners = Partner::latest()->get();
 
-        return view('frontend.partners', compact(
-            'settings',
-            'partners'
-        ));
-    }
+    //     return view('frontend.partners', compact(
+    //         'settings',
+    //         'partners'
+    //     ));
+    // }
 }

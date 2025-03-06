@@ -7,7 +7,8 @@ use App\Http\Requests\BenevoleRequest;
 use App\Http\Requests\ContactRequest;
 use App\Models\Benevole;
 use App\Models\Contact;
-use App\Models\HeaderFooterSetting;
+use App\Models\Setting;
+use App\Models\Partner;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
@@ -18,9 +19,9 @@ class ContactController extends Controller
     public function index()
     {
         // Récupérer les paramètres d'en-tête et de pied de page
-        $settings = HeaderFooterSetting::first();
-
-        return view('frontend.contact', compact('settings'));
+        $settings = Setting::first();
+        $partners = Partner::all();
+        return view('frontend.contact.index', compact('settings', 'partners'));
     }
 
     /**
@@ -35,7 +36,7 @@ class ContactController extends Controller
         Contact::create($data);
         
         // Rediriger avec un message de succès
-        return redirect()->route('contact.index')
+        return redirect()->route('contact')
             ->with('success', 'Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.');
     }
 
@@ -45,9 +46,16 @@ class ContactController extends Controller
     public function benevole()
     {
         // Récupérer les paramètres d'en-tête et de pied de page
-        $settings = HeaderFooterSetting::first();
+        $settings = Setting::first();
 
         return view('frontend.benevole', compact('settings'));
+    }
+
+    public function donation()
+    {
+        $partners = Partner::all();
+        $settings = Setting::first();
+        return view('frontend.donation.index', compact('settings', 'partners'));
     }
 
     /**
@@ -62,7 +70,7 @@ class ContactController extends Controller
         Benevole::create($data);
         
         // Rediriger avec un message de succès
-        return redirect()->route('contact.benevole')
+        return redirect()->route('home')
             ->with('success', 'Votre demande de bénévolat a été envoyée avec succès. Nous vous contacterons prochainement.');
     }
 }

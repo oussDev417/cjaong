@@ -1,21 +1,18 @@
-<!-- Partner Area Start -->
-<div class="partner-area pt-100 pb-100">
+<!-- All Patner Section Start -->
+<div class="all-patner-sec">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <div class="section-title">
-                    <h2>Nos <span>Partenaires</span></h2>
-                    <p>Nous sommes fiers de collaborer avec ces organisations qui partagent notre vision.</p>
+                <div class="sec-title">
+                    <h1>Nos partenaires</h1>
+                    <div class="border-shape"></div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="partner-slider owl-carousel">
+                
+                <div class="all-patner">
                     @foreach($partners ?? [] as $partner)
-                        <div class="single-partner">
+                        <div class="single-patner">
                             <a href="{{ $partner->url ?? '#' }}" target="_blank">
-                                <img src="{{ asset('storage/partners/' . $partner->image) }}" alt="{{ $partner->name }}">
+                                <img src="{{ asset('storage/partners/' . $partner->image) }}" alt="{{ $partner->name }}"/>
                             </a>
                         </div>
                     @endforeach
@@ -24,4 +21,4 @@
         </div>
     </div>
 </div>
-<!-- Partner Area End --> 
+<!-- All Patner Section End -->

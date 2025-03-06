@@ -9,8 +9,8 @@ use App\Models\Equipe;
 use App\Models\EquipeCategory;
 use App\Models\FunFact;
 use App\Models\Galerie;
-use App\Models\HeaderFooterSetting;
-use App\Models\HeaderSlider;
+use App\Models\Setting;
+use App\Models\Slider;
 use App\Models\News;
 use App\Models\Partner;
 use App\Models\Project;
@@ -25,10 +25,10 @@ class HomeController extends Controller
     public function index()
     {
         // Récupérer les paramètres d'en-tête et de pied de page
-        $settings = HeaderFooterSetting::first();
+        $settings = Setting::first();
 
         // Récupérer les sliders d'en-tête
-        $sliders = HeaderSlider::latest()->get();
+        $sliders = Slider::where('status', 1)->latest()->get();
 
         // Récupérer la section "À propos"
         $about = About::first();
@@ -40,7 +40,7 @@ class HomeController extends Controller
         $funFacts = FunFact::latest()->get();
 
         // Récupérer les statistiques
-        $statFacts = StatFact::latest()->get();
+        $statFacts = StatFact::first()->get();
 
         // Récupérer les projets
         $projects = Project::latest()->take(6)->get();

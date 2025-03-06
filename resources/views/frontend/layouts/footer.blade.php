@@ -7,11 +7,15 @@
                 <div class="col-md-6 col-sm-12">
                     <div class="footer-info">
                         <h2>{{ $settings->site_name ?? 'Carrefour Jeunesse Afrique' }}</h2>
-                        <p>
-                            <strong>Horaires :</strong><br>
-                            Du lundi au vendredi : 8h - 12h et 14h - 18h (heure administrative) <br>
-                            Mercredi et samedi : 15h - 18h (heure d'animation)
-                        </p>
+                        @if($settings->contact_hours)
+                        <p><strong>Horaires</strong><br>{!! $settings->contact_hours !!}</p>
+                        @else
+                            <p>
+                                <strong>Horaires</strong><br>
+                                Du lundi au vendredi : 8h - 12h et 14h - 18h (heure administrative) <br>
+                                Mercredi et samedi : 15h - 18h (heure d'animation)
+                            </p>
+                        @endif
                         <div class="social-profile">
                             <ul>
                                 @if($settings->facebook ?? true)
@@ -37,10 +41,10 @@
                     <div class="footer-contact">
                         <h2>République du Bénin</h2>
                         <p>
-                            <strong>Adresse :</strong> {{ $settings->address ?? 'Mono, Comè – Centre, Quartier Hongodé' }}<br>
-                            <strong>Rue :</strong> {{ $settings->street ?? 'n°3296 Danzounmé' }}<br>
-                            <strong>Email :</strong> <strong>{{ $settings->email ?? 'ongcarrefourjeunesseafrique@gmail.com' }}</strong><br>
-                            <strong>Téléphone : {{ $settings->phone ?? '+229 57-70-28-05' }}</strong>
+                            <strong>Adresse :</strong> {{ $settings->contact_address ?? 'Mono, Comè – Centre, Quartier Hongodé' }}<br>
+                            <strong>Rue :</strong> {{ $settings->contact_street ?? 'n°3296 Danzounmé' }}<br>
+                            <strong>Email :</strong> <strong>{{ $settings->contact_email ?? 'ongcarrefourjeunesseafrique@gmail.com' }}</strong><br>
+                            <strong>Téléphone : {{ $settings->contact_phone ?? '+229 57-70-28-05' }}</strong>
                         </p>
                     </div>
                 </div>

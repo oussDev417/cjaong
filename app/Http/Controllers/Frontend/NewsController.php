@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\HeaderFooterSetting;
+use App\Models\Setting;
 use App\Models\News;
 use App\Models\NewsCategory;
+use App\Models\Partner;
+use App\Models\Galerie;
+use App\Models\GalerieCategory;
 use Illuminate\Http\Request;
 
 class NewsController extends Controller
@@ -16,7 +19,7 @@ class NewsController extends Controller
     public function index(Request $request)
     {
         // Récupérer les paramètres d'en-tête et de pied de page
-        $settings = HeaderFooterSetting::first();
+        $settings = Setting::first();
 
         // Récupérer toutes les catégories pour le filtre
         $categories = NewsCategory::withCount('news')->get();
@@ -35,11 +38,19 @@ class NewsController extends Controller
         // Récupérer les actualités récentes pour la sidebar
         $recentNews = News::latest()->take(5)->get();
 
+        $partners = Partner::latest()->get();
+
+        $gallery = Galerie::latest()->get();
+        $galleryCategories = GalerieCategory::with('galeries')->get();
+
         return view('frontend.news.index', compact(
             'settings',
             'categories',
             'news',
-            'recentNews'
+            'recentNews',
+            'partners',
+            'gallery',
+            'galleryCategories'
         ));
     }
 
@@ -49,7 +60,7 @@ class NewsController extends Controller
     public function show($slug)
     {
         // Récupérer les paramètres d'en-tête et de pied de page
-        $settings = HeaderFooterSetting::first();
+        $settings = Setting::first();
 
         // Récupérer l'actualité avec sa catégorie
         $news = News::with('category')->where('slug', $slug)->firstOrFail();
@@ -70,12 +81,15 @@ class NewsController extends Controller
         // Récupérer toutes les catégories pour la sidebar
         $categories = NewsCategory::withCount('news')->get();
 
+        $partners = Partner::latest()->get();
+
         return view('frontend.news.show', compact(
             'settings',
             'news',
             'recentNews',
             'relatedNews',
-            'categories'
+            'categories',
+            'partners'
         ));
     }
 }

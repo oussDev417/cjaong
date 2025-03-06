@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Galerie;
-use App\Models\HeaderFooterSetting;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class GalerieController extends Controller
@@ -15,7 +15,7 @@ class GalerieController extends Controller
     public function index()
     {
         // Récupérer les paramètres d'en-tête et de pied de page
-        $settings = HeaderFooterSetting::first();
+        $settings = Setting::first();
 
         // Récupérer les images de la galerie avec pagination (12 par page)
         $galeries = Galerie::latest()->paginate(12);
@@ -36,7 +36,7 @@ class GalerieController extends Controller
     public function show($id)
     {
         // Récupérer les paramètres d'en-tête et de pied de page
-        $settings = HeaderFooterSetting::first();
+        $settings = Setting::first();
 
         // Récupérer l'image spécifique
         $galerie = Galerie::findOrFail($id);

@@ -13,20 +13,20 @@
                     </div>
                 </div>              
                 <div class="col-md-2 col-sm-2">
-                    <div class="contact-info">
+                    <!-- <div class="contact-info">
                         <div class="info-box">
                             <span class="info-title">Téléphone</span>
                             <span>{{ $settings->phone ?? '+229 57-70-28-05' }}</span>
                         </div>              
-                    </div>
+                    </div> -->
                 </div>                 
                 <div class="col-md-4 col-sm-4">
-                    <div class="contact-info">          
+                    <!-- <div class="contact-info">          
                         <div class="info-box">
                             <span class="info-title">email</span>
                             <span style="font-size: 14px;">{{ $settings->email ?? 'ongcarrefourjeunesseafrique@gmail.com' }}</span>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="col-md-3 col-sm-3">
                     <div class="social-profile">

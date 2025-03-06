@@ -58,8 +58,6 @@
         @yield('content')
     </main>
     
-    <!-- Partenaires -->
-    @include('frontend.layouts.partials.partners')
     
     <!-- Footer -->
     @include('frontend.layouts.footer')

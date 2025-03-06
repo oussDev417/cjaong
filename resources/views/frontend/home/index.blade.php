@@ -6,16 +6,16 @@
 <!-- Slider Section Start -->
 <div class="slider">
     <div class="all-slide owl-item">
-        @if(isset($sliders) && count($sliders) > 0)
-            @foreach($sliders as $slider)
+        @forelse($sliders ?? [] as $slider)
+            @if($slider->status == 1) <!-- Vérifier si le slider est actif -->
                 <div class="single-slide" style="background-image:url({{ asset('storage/' . $slider->image) }});">
                     <div class="slider-overlay"></div>
                     <div class="slider-wraper">
                         <div class="slider-text">
                             <div class="slider-inner">
                                 <h1>{{ $slider->title }}</h1>
-                                @if($slider->description)
-                                    <h2>{{ $slider->description }}</h2>
+                                @if($slider->subtitle)
+                                    <h2>{{ $slider->subtitle }}</h2>
                                 @endif
                             </div>
                             <ul>
@@ -29,8 +29,9 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
-        @else
+            @endif
+        @empty
+            <!-- Affichage des slides par défaut si aucun slide n'est disponible -->
             <div class="single-slide" style="background-image:url({{ asset('assets/img/slider.jpg') }});">
                 <div class="slider-overlay"></div>
                 <div class="slider-wraper">
@@ -76,10 +77,42 @@
                     </div>
                 </div>
             </div>
-        @endif
+        @endforelse
     </div>
 </div>
 <!-- Slider Section End -->
+
+<!-- Recent Causes Section Start -->	
+@if(isset($axes) && count($axes) > 0)
+<div class="recent-causes-sec pt-100 pb-70">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="sec-title">
+					<h1>Nos Axes Stratégiques</h1>
+					<div class="border-shape"></div>
+				</div>
+			</div>
+		</div>			
+		<div class="row">
+			@foreach($axes as $axe)
+			<div class="col-md-4 col-sm-4">
+				<div class="single-causes">
+					<div class="causes-thumb">
+						<img src="{{ asset('storage/axes/' . ($axe->image ?? 'default.jpg')) }}" alt="{{ $axe->title }}"/>
+					</div>
+					<div class="single-causes-text">
+						<h2><a href="{{ route('about') }}#axes">{{ $axe->title }}</a></h2>
+					</div>				
+				</div>
+			</div>
+			@endforeach
+		</div>
+	</div>
+</div>
+@endif
+<!-- Recent Causes Section End -->
+
  <!-- How To Help Section Start -->	
  <div class="how-to-help-sec pt-100 pb-70">
 		<div class="how-to-help-sec-overlay"></div>
@@ -88,13 +121,13 @@
 				<!-- Boîte de don -->
 				<div class="col-md-6">
 					<div class="donate-box">
-						<img src="img/p1.jpg" alt="Aide aux enfants sans abri" />
+						<img src="{{ asset('assets/img/p1.jpg') }}" alt="Aide aux enfants sans abri" />
 						<div class="donate-box-inner">
 							<div class="donate-box-text">	
 								<h2>Soutener une cause noble</h2>
 							</div>			
 							<div class="donate-box-button">
-								<a href="donation.html">Nous soutenir</a>
+								<a href="{{ route('donation') }}">Nous soutenir</a>
 							</div>
 						</div>
 					</div>
@@ -147,288 +180,205 @@
 	</div>		
 	<!-- How To Help Section End -->
 
+<!-- Become Volunteer Section Start -->	
+<div class="become-volunteer-sec">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-5"></div>
+			<div class="col-md-7 col-sm-12 col-xs-12">
+				<div class="volunteer-form">
+					<div class="volunteer-form-overlay"></div>
+					<h5>Donnez un coup de main</h5>
+					<h1>Devenez bénévole</h1>
+					<div class="row">
+						<form action="{{ route('benevole.store') }}" method="POST">
+							@csrf
+							<div class="col-md-6 col-sm-6">
+								<input type="text" name="prenom" placeholder="Prénom" required/> 
+							</div>
+							<div class="col-md-6 col-sm-6">
+								<input type="text" name="name" placeholder="Nom" required/> 
+							</div>
+							<div class="col-md-6 col-sm-6">
+								<input type="email" name="email" placeholder="E-mail" required/> 
+							</div>				
+							<div class="col-md-6 col-sm-6">
+								<input type="tel" name="phone" placeholder="Téléphone" required/> 
+							</div>
+                            <div class="col-md-12">
+								<div class="checkbox-field">
+									<input type="checkbox" id="formcheck" required>
+									<label for="formcheck">J'accepte les conditions générales et m'engage à respecter les valeurs de l'association.</label>	
+								</div>	
+							</div>
+							<div class="col-md-12">
+								<input type="submit" value="Envoyer"/>
+							</div>
+							
+							@if(session('success'))
+								<div class="col-md-12">
+									<div class="alert alert-success">
+										{{ session('success') }}
+									</div>
+								</div>
+							@endif
+							@error('name')
+								<div class="col-md-12">
+									<div class="alert alert-danger">
+										{{ $message }}
+									</div>
+								</div>
+							@enderror
+							@error('prenom')
+								<div class="col-md-12">
+									<div class="alert alert-danger">
+										{{ $message }}
+									</div>
+								</div>
+							@enderror
+							@error('email')
+								<div class="col-md-12">
+									<div class="alert alert-danger">
+										{{ $message }}
+									</div>
+								</div>
+							@enderror
+							@error('phone')
+								<div class="col-md-12">
+									<div class="alert alert-danger">
+										{{ $message }}
+									</div>
+								</div>
+							@enderror
+						</form>
+					</div>	
+				</div>
+			</div>
+		</div>
+	</div>
+</div>		
+<!-- Become Volunteer Section End -->
 
+<!-- Count Up Section Start -->	
+<div class="count-up-sec">
+	<div class="count-up-sec-overlay"></div>
+	<div class="container">
+		<div class="row">						
+			<div class="col-md-3 col-sm-6 col-xs-6 inner">
+				<div class="counting_sl">
+					<div class="countup-icon">
+						<img src="img/icon/manager.png" alt=""/>
+					</div>
+					<div class="countup-text">
+						<h2 class="counter">{{ $statFacts[0]->counter ?? '5468' }}</h2>
+						<h4>{{ $statFacts[0]->title ?? 'Donateurs' }}</h4>						
+					</div>
+				</div>
+			</div>					
+			<div class="col-md-3 col-sm-6 col-xs-6 inner">
+				<div class="counting_sl">
+					<div class="countup-icon">
+						<img src="img/icon/exam.png" alt=""/>
+					</div>
+					<div class="countup-text">
+						<h2 class="counter">{{ $statFacts[1]->counter ?? '6875' }}</h2>
+						<h4>{{ $statFacts[1]->title ?? 'Projets réalisés' }}</h4>						
+					</div>
+				</div>
+			</div>					
+			<div class="col-md-3 col-sm-6 col-xs-6 inner">
+				<div class="counting_sl">
+					<div class="countup-icon">
+						<img src="img/icon/users.png" alt=""/>
+					</div>
+					<div class="countup-text">
+						<h2 class="counter">{{ $statFacts[2]->counter ?? '6875' }}</h2>
+						<h4>{{ $statFacts[2]->title ?? 'Bénévoles' }}</h4>						
+					</div>
+				</div>				
+			</div>					
+			<div class="col-md-3 col-sm-6 col-xs-6 inner">
+				<div class="counting_sl">
+					<div class="countup-icon">
+						<img src="img/icon/coins.png" alt=""/>
+					</div>
+					<div class="countup-text">
+						<h2 class="counter">{{ $statFacts[3]->counter ?? '45,000' }}</h2>
+						<h4>{{ $statFacts[3]->title ?? 'Montant collecté' }}</h4>						
+					</div>
+				</div>
+			</div>												
+		</div>					
+	</div>
+</div>	
+<!-- Count Up Section End -->
 
-<!-- Service Area Start -->
-@if(isset($axes) && count($axes) > 0)
-<div class="causes-area">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="section-heading">
-                    <div class="sec-title">
-                        <h2>Nos axes d'intervention</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            @foreach($axes as $axe)
-                <div class="col-lg-4 col-md-6">
-                    <div class="causes-item">
-                        <div class="causes-img">
-                            <img src="{{ asset('assets/images/axes/default.jpg') }}" alt="{{ $axe->title }}">
-                        </div>
-                        <div class="causes-text">
-                            <h3>{{ $axe->title }}</h3>
-                            <p>{{ Str::limit(strip_tags($axe->description), 150) }}</p>
-                            <div class="causes-rm">
-                                <a href="{{ route('about') }}#axes">Lire la suite</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
+<!-- Fun Facts Section Start -->
+@if(isset($funFacts) && count($funFacts) > 0)
+<div class="event-sec pt-100 pb-70">
+	<div class="container">
+		<style>
+			.highlight {
+				background-color: #8DC63F;
+				color: white;
+				padding: 5px 10px;
+				border-radius: 5px;
+				font-weight: bold;
+			}
+			.stat-card {
+				display: flex;
+				align-items: center;
+				margin-top: 20px;
+			}
+			.stat-icon {
+				width: 80px;
+				height: 70px;
+				border-radius: 50%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-size: 24px; 
+				font-weight: bold;
+				margin-right: 15px;
+				color: white;
+			}
+			.icon-green { background-color: #8DC63F; }
+			.icon-blue { background-color: #042a41; }
+			.icon-red { background-color: #F9A126; }
+			.icon-yellow { background-color: #042a41; }
+			.stat-text {
+				font-size: 18px;
+			}
+		</style>
+		<div class="row">
+			<!-- Titre -->
+			<div class="col-lg-6">
+				<div class="sec-title">
+					<h1>Quelques Statistiques</h1>
+					<div class="border-shape"></div>
+				</div>
+				<h1><strong>Carrefour Jeunesse Afrique</strong></h1>
+				<p class="highlight">Un centre d'aide à l'enfance, à l'adolescence et à la jeunesse</p>
+	
+				<!-- Statistiques -->
+				@foreach($funFacts as $index => $fact)
+				<div class="stat-card">
+					<div class="stat-icon icon-{{ ['green', 'blue', 'red', 'yellow'][$index % 4] }}">{{ $fact->count }}</div>
+					<p class="stat-text">{{ $fact->title }}</p>
+				</div>
+				@endforeach
+			</div>
+	
+			<!-- Image -->
+			<div class="col-lg-6 d-flex align-items-center">
+				<img src="{{ asset('assets/img/enfants_souriants.jpeg') }}" alt="Enfants souriants" class="img-fluid rounded">
+			</div>
+		</div>
+	</div>
 </div>
 @endif
-<!-- Service Area End -->
+<!-- Fun Facts Section End -->
 
-<!-- Counter Area Start -->
-@if(isset($funfacts) && count($funfacts) > 0)
-<div class="counter-area">
-    <div class="container">
-        <div class="row">
-            @foreach($funfacts as $fact)
-                <div class="col-md-3 col-sm-6">
-                    <div class="counter-item">
-                        <div class="counter-icon">
-                            <i class="{{ $fact->icon ?? 'fas fa-users' }}"></i>
-                        </div>
-                        <div class="counter-text">
-                            <h2 class="counter">{{ $fact->count }}</h2>
-                            <h4>{{ $fact->title }}</h4>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
-</div>
-@endif
-<!-- Counter Area End -->
-
-<!-- Project Area Start -->
-@if(isset($projects) && count($projects) > 0)
-<div class="projects-area">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="section-heading">
-                    <div class="sec-title">
-                        <h2>Nos projets récents</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            @foreach($projects as $project)
-                <div class="col-lg-4 col-md-6">
-                    <div class="project-item">
-                        <div class="project-img">
-                            <img src="{{ asset('assets/images/projects/default.jpg') }}" alt="{{ $project->title }}">
-                        </div>
-                        <div class="project-overlay">
-                            <div class="project-text">
-                                <h3><a href="{{ route('projects.show', $project->slug) }}">{{ $project->title }}</a></h3>
-                                <div class="button-rm">
-                                    <a href="{{ route('projects.show', $project->slug) }}">Lire la suite</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
-</div>
-@endif
-<!-- Project Area End -->
-
-<!-- Testimonial Area Start -->
-@if(isset($testimonials) && count($testimonials) > 0)
-<div class="testimonial-area">
-    <div class="overlay"></div>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="section-heading">
-                    <div class="sec-title">
-                        <h2>Témoignages</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="testimonial-slider">
-                    @foreach($testimonials as $testimonial)
-                        <div class="testimonial-item">
-                            <div class="testimonial-text">
-                                <p>{{ $testimonial->content }}</p>
-                            </div>
-                            <div class="testimonial-meta">
-                                @if($testimonial->image)
-                                    <div class="t-photo">
-                                        <img src="{{ asset('storage/' . $testimonial->image) }}" alt="{{ $testimonial->name }}">
-                                    </div>
-                                @endif
-                                <div class="t-info">
-                                    <h4>{{ $testimonial->name }}</h4>
-                                    <span>{{ $testimonial->role }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endif
-<!-- Testimonial Area End -->
-
-<!-- Team Area Start -->
-@if(isset($teamCategories) && isset($teamMembers) && count($teamMembers) > 0)
-<div class="team-area">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="section-heading">
-                    <div class="sec-title">
-                        <h2>Notre équipe</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            @if(isset($team) && count($team) > 0)
-                @foreach($team as $member)
-                    <div class="col-lg-3 col-md-6">
-                        <div class="team-item">
-                            <div class="team-img">
-                                <img src="{{ asset('assets/images/team/default.jpg') }}" alt="{{ $member->name }}">
-                            </div>
-                            <div class="team-social">
-                                <ul>
-                                    @if($member->facebook)
-                                        <li><a href="{{ $member->facebook }}"><i class="fab fa-facebook-f"></i></a></li>
-                                    @endif
-                                    @if($member->twitter)
-                                        <li><a href="{{ $member->twitter }}"><i class="fab fa-twitter"></i></a></li>
-                                    @endif
-                                    @if($member->linkedin)
-                                        <li><a href="{{ $member->linkedin }}"><i class="fab fa-linkedin-in"></i></a></li>
-                                    @endif
-                                </ul>
-                            </div>
-                            <div class="team-text">
-                                <h3>{{ $member->name }}</h3>
-                                <p>{{ $member->role }}</p>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            @endif
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="team-btn">
-                    <a href="{{ route('team') }}" class="btn1">Voir toute l'équipe</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endif
-<!-- Team Area End -->
-
-<!-- News Area Start -->
-@if(isset($news) && count($news) > 0)
-<div class="news-area">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="section-heading">
-                    <div class="sec-title">
-                        <h2>Actualités récentes</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            @if(isset($news) && count($news) > 0)
-                @foreach($news as $post)
-                    <div class="col-lg-4 col-md-6">
-                        <div class="news-item">
-                            <div class="news-img">
-                                <img src="{{ asset('assets/images/news/default.jpg') }}" alt="{{ $post->title }}">
-                            </div>
-                            <div class="news-text">
-                                <div class="news-date">
-                                    <span>{{ $post->created_at->format('d') }}</span>
-                                    <span>{{ $post->created_at->format('M') }}</span>
-                                </div>
-                                <h3><a href="{{ route('news.show', $post->slug) }}">{{ $post->title }}</a></h3>
-                                <p>{{ Str::limit(strip_tags($post->content), 100) }}</p>
-                                <div class="news-rm">
-                                    <a href="{{ route('news.show', $post->slug) }}">Lire la suite</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            @endif
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="news-btn">
-                    <a href="{{ route('news.index') }}" class="btn1">Voir toutes les actualités</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endif
-<!-- News Area End -->
-
-<!-- Gallery Area Start -->
-@if(isset($gallery) && count($gallery) > 0)
-<div class="gallery-area">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="section-heading">
-                    <div class="sec-title">
-                        <h2>Notre galerie</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="gallery-item">
-                    @foreach($gallery as $item)
-                        <div class="gallery-photo">
-                            @if($item->image)
-                                <a href="{{ asset('storage/' . $item->image) }}" class="magnific">
-                                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->title }}">
-                                    <div class="gallery-overlay">
-                                        <div class="gallery-icon">
-                                            <i class="fa fa-plus"></i>
-                                        </div>
-                                    </div>
-                                </a>
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endif
-<!-- Gallery Area End -->
-
+<!-- Partenaires -->
+@include('frontend.layouts.partials.partners')
 @endsection 

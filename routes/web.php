@@ -24,6 +24,7 @@ use App\Http\Controllers\Frontend\ContactController as FrontendContactController
 use App\Http\Controllers\Frontend\NewsController as FrontendNewsController;
 use App\Http\Controllers\Frontend\ProjectController as FrontendProjectController;
 use App\Http\Controllers\Frontend\GalerieController as FrontendGalerieController;
+use App\Http\Controllers\Frontend\TeamController as FrontendTeamController;
 use App\Http\Controllers\Admin\GalerieCategoryController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SliderController;
@@ -31,8 +32,8 @@ use App\Http\Controllers\Admin\SliderController;
 // Frontend Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/a-propos', [FrontendAboutController::class, 'index'])->name('about');
-Route::get('/equipe', [FrontendAboutController::class, 'team'])->name('team');
-Route::get('/donation')->name('donation');
+Route::get('/equipe', [FrontendTeamController::class, 'index'])->name('team');
+Route::get('/donation', [FrontendContactController::class, 'donation'])->name('donation');
 Route::get('/axes-intervention', [FrontendAboutController::class, 'axes'])->name('axes');
 Route::get('/partenaires', [FrontendAboutController::class, 'partners'])->name('partners');
 
@@ -299,7 +300,6 @@ Route::view('switch', 'switch')->name('switch');
 
 Route::view('tabler_icons', 'tabler_icons')->name('tabler_icons');
 Route::view('tabs', 'tabs')->name('tabs');
-Route::view('team', 'team')->name('team');
 Route::view('terms_condition', 'terms_condition')->name('terms_condition');
 Route::view('textarea', 'textarea')->name('textarea');
 Route::view('ticket', 'ticket')->name('ticket');
